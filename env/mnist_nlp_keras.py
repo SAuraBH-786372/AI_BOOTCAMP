@@ -1,4 +1,4 @@
-#importing libraries
+# Importing libraries
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Sequential
@@ -27,20 +27,36 @@ y_test = to_categorical(y_test)
 print(f"After encoding label 100: {y_train[100]}")
 
 # Model architecture
-model = Sequential()
-model.add(Flatten(input_shape=(28, 28)))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(10, activation='softmax'))
+model = Sequential([
+    Flatten(input_shape=(28, 28)),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
+])
 
-#compiling model
+# Compile model
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-#training model
-result=model.fit(x_train, y_train, epochs=10,batch_size=64)
+# Train model (added validation split)
+result = model.fit(x_train, y_train, epochs=10, batch_size=64, validation_split=0.1)
 
-#evaluating model
-loss, accuracy=model.evaluate(x_train,y_train)
-model.evaluate(x_test,y_test)
-print(f"test loss:{loss}")
-print(f"test accuracy:{accuracy}")
-print(result.history)
+# Evaluate model
+loss, accuracy = model.evaluate(x_test, y_test)
+print(f"Test loss: {loss}")
+print(f"Test accuracy: {accuracy}")
+
+# Visualize training history
+plt.plot(result.history['loss'], label='Train loss', color='green')
+plt.plot(result.history['val_loss'], label='Validation loss', color='blue')
+plt.title('Training Loss vs Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+
+plt.plot(result.history['accuracy'], label='Train accuracy', color='green')
+plt.plot(result.history['val_accuracy'], label='Validation accuracy', color='blue')
+plt.title('Training Accuracy vs Validation Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
